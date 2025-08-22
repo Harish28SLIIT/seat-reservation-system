@@ -4,15 +4,15 @@
   "description": "A comprehensive seat reservation system with QR login, fingerprint authentication, and admin dashboard",
   "main": "backend/server.js",
   "scripts": {
-    "start": "cd backend && node server.js",
-    "dev": "cd backend && nodemon server.js",
-    "install-deps": "cd backend && npm install"
+    "start": "cd backend && npm install && node server.js",
+    "build": "cd backend && npm install",
+    "dev": "cd backend && npm install && nodemon server.js"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "keywords": ["seat-reservation", "authentication", "qr-login", "webauthn"],
-  "author": "Your Name",
+  "author": "Harish28SLIIT",
   "license": "MIT"
 }
