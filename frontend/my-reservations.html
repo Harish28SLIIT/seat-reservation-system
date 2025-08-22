@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Reservations</title>
+  <link rel="stylesheet" href="css/intern.css" />
+</head>
+<body>
+  <div class="intern-container">
+    <aside class="sidebar">
+      <h2>Intern Panel</h2>
+      <nav>
+        <a href="intern-dashboard.html" class="nav-link">Book Seat</a>
+        <a href="manual-booking.html" class="nav-link">Manual Booking</a>
+        <a href="my-reservations.html" class="nav-link active">My Reservations</a>
+        <a href="past-reservations.html" class="nav-link">Past Reservations</a>
+        <a href="my-reports.html" class="nav-link">My Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>My Reservations</h1>
+      </header>
+
+      <div class="form-card">
+        <div id="reservationList" class="card-list"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Popup -->
+  <div id="editPopup" class="popup hidden">
+    <h3>Edit Reservation</h3>
+    <form id="editForm">
+      <input type="hidden" id="editReservationId" />
+      <input type="hidden" id="editSeatId" />
+      <label for="editDate">Date:</label>
+      <input type="date" id="editDate" required />
+      <label for="editStartTime">Start Time:</label>
+      <input type="time" id="editStartTime" required />
+      <label for="editEndTime">End Time:</label>
+      <input type="time" id="editEndTime" required />
+      <button type="submit" class="btn">Save Changes</button>
+      <button type="button" class="btn cancel-btn" onclick="cancelEdit()">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Cancel Confirmation Popup -->
+  <div id="cancelPopup" class="popup hidden">
+    <h3>Reservation Cancelled</h3>
+    <p>Undo in <span id="undoTimer">10</span>s</p>
+    <button class="btn cancel-btn" onclick="cancelUndo()">Undo</button>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api';
+    const user = JSON.parse(localStorage.getItem('user'));
+    let undoTimer;
+
+    // ✅ Check authentication when page loads (but allow time for user data to be set)
+    function checkAuthentication() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        setTimeout(() => {
+          const userCheck = JSON.parse(localStorage.getItem('user'));
+          if (!userCheck || !userCheck.id) {
+            alert("Please log in first.");
+            window.location.href = "index.html";
+          }
+        }, 1000); // Wait 1 second for user data to be set
+      }
+    }
+
+    // Call authentication check
+    checkAuthentication();
+
+    async function loadMyReservations() {
+      try {
+        const res = await fetch(`${API}/intern/my-reservations/${user.id}`);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        const data = await res.json();
+        const list = document.getElementById("reservationList");
+        list.innerHTML = "";
+
+        const now = new Date();
+
+        if (data.length === 0) {
+          list.innerHTML = "<p class='empty-message'>No reservations found.</p>";
+          return;
+        }
+
+      data.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const header = document.createElement("div");
+        header.className = "card-header";
+        header.innerHTML = `
+          <h3>${r.seat_number}</h3>
+          <span class="badge">${r.status}</span>
+        `;
+
+        const body = document.createElement("div");
+        body.innerHTML = `
+          <p><strong>Date:</strong> ${r.date}</p>
+          <p><strong>Time:</strong> ${r.start_time} - ${r.end_time}</p>
+          <p><strong>Floor:</strong> ${r.location}</p>
+        `;
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+
+        const startTime = new Date(`${r.date}T${r.start_time}`);
+        if (r.status === 'active' && startTime > now) {
+          footer.innerHTML = `
+            <button class="btn small-btn edit-btn" onclick='openEditPopup(${JSON.stringify(r)})'>Edit</button>
+            <button class="btn small-btn cancel-btn" onclick='showUndoPopup(${r.id})'>Delete</button>
+            <button class="btn small-btn secondary-btn">Details</button>
+            <button class="btn small-btn secondary-btn">Share</button>
+          `;
+        }
+
+        div.appendChild(header);
+        div.appendChild(body);
+        div.appendChild(footer);
+        list.appendChild(div);
+      });
+      } catch (error) {
+        console.error("Failed to load reservations:", error);
+        const list = document.getElementById("reservationList");
+        list.innerHTML = `<p class='error-message'>Failed to load reservations: ${error.message}</p>`;
+      }
+    }
+
+    function openEditPopup(r) {
+      document.getElementById("editReservationId").value = r.id;
+      document.getElementById("editSeatId").value = r.seat_id;
+      document.getElementById("editDate").value = r.date;
+      document.getElementById("editStartTime").value = r.start_time.slice(0, 5);
+      document.getElementById("editEndTime").value = r.end_time.slice(0, 5);
+      document.getElementById("editPopup").classList.remove("hidden");
+    }
+
+    function cancelEdit() {
+      document.getElementById("editPopup").classList.add("hidden");
+    }
+
+    document.getElementById("editForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("editReservationId").value;
+      const seatId = document.getElementById("editSeatId").value;
+      const date = document.getElementById("editDate").value;
+      const startTime = document.getElementById("editStartTime").value;
+      const endTime = document.getElementById("editEndTime").value;
+
+      const res = await fetch(`${API}/intern/edit`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seatId, date, startTime, endTime, id })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+      cancelEdit();
+      loadMyReservations();
+    });
+
+    function showUndoPopup(id) {
+      const popup = document.getElementById("cancelPopup");
+      popup.classList.remove("hidden");
+
+      let secondsLeft = 10;
+      document.getElementById("undoTimer").innerText = secondsLeft;
+
+      undoTimer = setInterval(() => {
+        secondsLeft--;
+        document.getElementById("undoTimer").innerText = secondsLeft;
+        if (secondsLeft <= 0) {
+          clearInterval(undoTimer);
+          popup.classList.add("hidden");
+          finalizeCancel(id);
+        }
+      }, 1000);
+    }
+
+    function cancelUndo() {
+      clearInterval(undoTimer);
+      document.getElementById("cancelPopup").classList.add("hidden");
+      alert("Undo successful. Reservation not cancelled.");
+    }
+
+    async function finalizeCancel(id) {
+      await fetch(`${API}/intern/cancel/${id}`, { method: "DELETE" });
+      loadMyReservations();
+    }
+
+    // ✅ Export functions
+    function downloadMyCSV() {
+      if (!user || !user.id) {
+        alert("Please log in first.");
+        return;
+      }
+      window.open(`${API}/intern/my-reservations/export/${user.id}`, '_blank');
+    }
+
+    function downloadMyPDF() {
+      if (!user || !user.id) {
+        alert("Please log in first.");
+        return;
+      }
+      window.open(`${API}/intern/my-reservations/export/pdf/${user.id}`, '_blank');
+    }
+
+    window.onload = loadMyReservations;
+  </script>
+</body>
+</html>

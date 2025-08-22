@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intern Dashboard</title>
+  <link rel="stylesheet" href="css/intern.css" />
+</head>
+<body>
+  <div class="intern-container">
+    <aside class="sidebar">
+      <h2>Intern Panel</h2>
+      <nav>
+        <a href="intern-dashboard.html" class="nav-link active">Book Seat</a>
+        <a href="manual-booking.html" class="nav-link">Manual Booking</a>
+        <a href="my-reservations.html" class="nav-link">My Reservations</a>
+        <a href="past-reservations.html" class="nav-link">Past Reservations</a>
+        <a href="my-reports.html" class="nav-link">My Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Book a Seat</h1>
+      </header>
+
+      <div class="form-card">
+        <div class="form-field">
+          <label for="floorSelect">Select Floor:</label>
+          <select id="floorSelect">
+            <option value="1st floor">1st Floor</option>
+            <option value="2nd floor">2nd Floor</option>
+            <option value="3rd floor">3rd Floor</option>
+            <option value="4th floor">4th Floor</option>
+            <option value="5th floor">5th Floor</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="seatDate">Date:</label>
+          <input type="date" id="seatDate" />
+        </div>
+
+        <div class="form-field">
+          <label for="startTime">Start Time:</label>
+          <input type="time" id="startTime" step="60" />
+        </div>
+
+        <div class="form-field">
+          <label for="endTime">End Time:</label>
+          <input type="time" id="endTime" step="60" />
+        </div>
+
+        <button onclick="loadAvailableSeats()" class="btn">Load Available Seats</button>
+
+        <div class="form-field">
+          <label for="seatSelect">Available Seats:</label>
+          <select id="seatSelect"></select>
+        </div>
+
+        <button onclick="reserveSeat()" class="btn">Reserve</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/intern.js"></script>
+  <script>
+    // ✅ Set today's date by default
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      const dateField = document.getElementById('seatDate');
+      if (dateField) {
+        dateField.value = today;
+        dateField.min = today; // Prevent selecting past dates
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Used Seats</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2>Admin Panel</h2>
+      <nav>
+        <a href="admin-dashboard.html" class="nav-link">Add Seat</a>
+        <a href="seat-viewer.html" class="nav-link">Seat Viewer</a>
+        <a href="used-seats.html" class="nav-link active">Used Seats</a>
+        <a href="current-usage.html" class="nav-link">Currently Used</a>
+        <a href="cancelled-reservations.html" class="nav-link">Cancelled</a>
+        <a href="get-reports.html" class="nav-link">Get Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Used Seats</h1>
+      </header>
+      
+      <div class="form-card">
+        <div id="usedList" class="card-list"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    fetch('http://localhost:5000/api/admin/used-seats')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('usedList');
+        list.innerHTML = '';
+        if (data.length === 0) {
+          list.innerHTML = "<p class='empty-message'>No used seats available currently.</p>";
+        }
+        data.forEach(r => {
+          const div = document.createElement('div');
+          div.className = 'card';
+
+          div.innerHTML = `
+            <div class="card-header">
+              <h3>${r.intern_name}</h3>
+              <span class="badge">${r.seat_number}</span>
+            </div>
+            <p><strong>Date:</strong> ${r.date}</p>
+            <p><strong>Time:</strong> ${r.start_time} - ${r.end_time}</p>
+            <p><strong>Floor:</strong> ${r.location}</p>
+            <div class="card-footer">
+              <span class="label">Completed</span>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Reports</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <style>
+    .form-card {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .form-card h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #003366;
+    }
+
+    .form-card .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .form-card .btn-group button {
+      padding: 12px 24px;
+      font-size: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-card .btn-group button:hover {
+      background-color: #0056b3;
+    }
+
+    .description {
+      text-align: center;
+      color: #555;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Admin Panel</h2>
+      <nav>
+        <a href="admin-dashboard.html" class="nav-link">Add Seat</a>
+        <a href="seat-viewer.html" class="nav-link">Seat Viewer</a>
+        <a href="used-seats.html" class="nav-link">Used Seats</a>
+        <a href="current-usage.html" class="nav-link">Currently Used</a>
+        <a href="cancelled-reservations.html" class="nav-link">Cancelled</a>
+        <a href="get-reports.html" class="nav-link active">Get Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="form-card">
+        <h2>📊 Reservation Reports</h2>
+        <p class="description">Download all current reservation records as:</p>
+        <div class="btn-group">
+          <button onclick="downloadCSV()">📥 Export as CSV</button>
+          <button onclick="downloadPDF()">📄 Export as PDF</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function downloadCSV() {
+      window.open('http://localhost:5000/api/admin/export/csv', '_blank');
+    }
+
+    function downloadPDF() {
+      window.open('http://localhost:5000/api/admin/export/pdf', '_blank');
+    }
+  </script>
+</body>
+</html>

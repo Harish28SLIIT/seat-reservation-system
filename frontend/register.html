@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Seat Reservation</title>
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bgVideo">
+  <source src="videos/login.mp4" type="video/mp4">
+</video>
+
+
+  <header>Seat Reservation System</header>
+
+  <div class="container">
+    <h2>Register</h2>
+    <input type="text" id="regName" placeholder="Name">
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Password">
+    <input type="tel" id="regPhone" placeholder="Phone Number (for SMS alerts)">
+
+    <label for="regRole">Role:</label>
+    <select id="regRole" name="regRole">
+      <option value="intern">Intern</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="index.html">Login</a></p>
+  </div>
+
+  <footer>© 2025 Seat Reservation System. All rights reserved.</footer>
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

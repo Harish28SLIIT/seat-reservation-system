@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Admin Panel</h2>
+      <nav>
+        <a href="admin-dashboard.html" class="nav-link active">Add Seat</a>
+        <a href="seat-viewer.html" class="nav-link">Seat Viewer</a>
+        <a href="used-seats.html" class="nav-link">Used Seats</a>
+        <a href="current-usage.html" class="nav-link">Currently Used</a>
+        <a href="cancelled-reservations.html" class="nav-link">Cancelled</a>
+        <a href="get-reports.html" class="nav-link">Get Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Add New Seat</h1>
+      </header>
+
+      <!-- Add Seat Form -->
+      <div class="form-card">
+        <form id="seatForm">
+          <div class="form-field">
+            <label for="seatNumber">Seat Number</label>
+            <input type="text" id="seatNumber" required placeholder="e.g., A16" />
+          </div>
+          <div class="form-field">
+            <label for="location">Location (Floor)</label>
+            <input type="text" id="location" required placeholder="e.g., 1st floor" />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Add Seat</button>
+          </div>
+        </form>
+      </div>
+
+
+
+    </main>
+  </div>
+
+  <script>
+    function downloadCSV() {
+      window.open('http://localhost:5000/api/admin/export/csv', '_blank');
+    }
+    function downloadPDF() {
+      window.open('http://localhost:5000/api/admin/export/pdf', '_blank');
+    }
+  </script>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

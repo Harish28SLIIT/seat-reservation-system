@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Seat Reservation</title>
+  <link rel="stylesheet" href="css/auth.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase.js"></script>
+</head>
+<body>
+
+  <!-- Background -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="videos/login.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <header>Seat Reservation System</header>
+
+  <div class="container">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button onclick="login()">Login</button>
+
+    <button onclick="loginWithGoogle()" class="google-btn">Continue with Google</button>
+    <p class="note">Note: Google login is for interns only.</p>
+
+    <hr/>
+    <button id="btnRegister" disabled style="opacity: 0.6;">Register Fingerprint</button>
+    <button id="btnLogin" disabled style="opacity: 0.6;">Login with Fingerprint</button>
+    
+    <hr/>
+    <button id="btnQRLogin" class="qr-btn">🔐 Admin QR Login</button>
+    <p class="note">Note: QR login is for admins only.</p>
+    
+    <hr/>
+    <button id="btnOtherOptions" class="other-options-btn">🔄 Other Login Options</button>
+    
+    <!-- Hidden section for other login options -->
+    <div id="otherLoginOptions" class="other-login-section" style="display: none;">
+      <div class="login-option">
+        <button id="btnFaceLogin" class="face-login-btn">👁️ Face Scan + Password</button>
+        <p class="note">Scan your face, then enter password to login</p>
+      </div>
+      
+      <div class="login-option">
+        <button id="btnSMSOTP" class="sms-otp-btn">📱 SMS OTP Login</button>
+        <p class="note">Send OTP to your registered mobile number</p>
+      </div>
+    </div>
+
+    <p>Don't have an account? <a href="register.html">Sign up</a></p>
+    <p class="login-quote">“SECURE YOUR SEAT. SIMPLIFY YOUR DAY.”</p>
+  </div>
+
+  <!-- QR Login Modal -->
+  <div id="qrModal" class="qr-modal">
+    <div class="qr-modal-content">
+      <div class="qr-header">
+        <h3>🔐 Admin QR Login</h3>
+        <span class="qr-close" onclick="closeQRModal()">&times;</span>
+      </div>
+      
+      <div id="qrStep1" class="qr-step">
+        <p><strong>Step 1:</strong> Scan this QR code with your mobile device:</p>
+        <div id="qrCodeContainer">
+          <img id="qrCodeImage" src="" alt="QR Code" style="width: 250px; height: 250px; border: 2px solid #ddd; border-radius: 8px;">
+        </div>
+        <p class="qr-instructions">
+          1. Scan the QR code with your phone<br>
+          2. Enter your Admin ID (1-5) and email address<br>
+          3. Click "Send Verification Code"
+        </p>
+        
+        <div id="otpSection">
+          <p><strong>Step 2:</strong> Enter the 6-digit verification code from your email:</p>
+          <input type="text" id="verificationCode" placeholder="Enter 6-digit code" maxlength="6" class="verification-input">
+          <button onclick="verifyQRCode()" class="verify-btn">Verify & Login</button>
+          <div id="qrStatus"></div>
+        </div>
+      </div>
+      
+      <div id="qrStep2" class="qr-step">
+        <p>Enter the 6-digit verification code sent to your email:</p>
+        <input type="text" id="verificationCode2" placeholder="Enter 6-digit code" maxlength="6" class="verification-input">
+        <button onclick="verifyQRCode()" class="verify-btn">Verify & Login</button>
+        <p id="qrStatus" class="qr-status"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMS OTP Modal -->
+  <div id="smsOTPModal" class="sms-otp-modal">
+    <div class="sms-otp-modal-content">
+      <h3>📱 SMS OTP Login</h3>
+      <p>Enter your registered mobile number to receive OTP</p>
+      <input type="tel" id="mobileNumber" placeholder="Enter mobile number" class="otp-input" style="letter-spacing: normal;">
+      <button onclick="sendSMSOTP()" class="verify-otp-btn">Send OTP</button>
+      
+      <div id="otpSection" style="display: none;">
+        <p>Enter the 6-digit OTP sent to your mobile:</p>
+        <input type="text" id="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" class="otp-input">
+        <button onclick="verifySMSOTP()" class="verify-otp-btn">Verify & Login</button>
+      </div>
+      
+      <button onclick="closeSMSOTPModal()" class="close-otp-btn">Close</button>
+      <div id="otpStatus" class="otp-status"></div>
+    </div>
+  </div>
+
+  <!-- Face Login Modal -->
+  <div id="faceLoginModal" class="face-login-modal">
+    <div class="face-login-modal-content">
+      <h3>👁️ Face Scan + Password Login</h3>
+      <p><strong>SECURE LOGIN:</strong> First scan your face, then enter your password to complete login.</p>
+      
+      <div class="camera-container">
+        <video id="cameraVideo" class="camera-video" autoplay muted style="display: none;"></video>
+        <div class="face-overlay"></div>
+      </div>
+      
+      <div class="face-login-controls">
+        <button onclick="startFaceLogin()" id="startFaceBtn" class="start-face-btn">📹 Start Camera</button>
+        <button onclick="scanFace()" id="scanFaceBtn" class="scan-face-btn" style="display: none;">🔍 Scan Face</button>
+        <button onclick="closeFaceLoginModal()" class="close-face-btn">Close</button>
+      </div>
+      
+      <!-- Password input section (shown after face scan) -->
+      <div id="facePasswordSection" class="face-password-section" style="display: none;">
+        <hr>
+        <h4>🔐 Complete Login with Password</h4>
+        <input type="email" id="faceEmailInput" placeholder="Enter your email" class="face-input">
+        <input type="password" id="facePasswordInput" placeholder="Enter your password" class="face-input">
+        <button onclick="completeFaceLogin()" class="complete-face-btn">✅ Complete Login</button>
+      </div>
+      
+      <div id="faceStatus" class="face-status"></div>
+    </div>
+  </div>
+
+  <footer>© 2025 Seat Reservation System. All rights reserved.</footer>
+
+  <!-- ✅ Load WebAuthn first -->
+  <script src="https://unpkg.com/@simplewebauthn/browser@latest/dist/simplewebauthn-browser.umd.min.js" defer></script>
+
+  <!-- ✅ Load main logic after WebAuthn -->
+  <script src="js/auth.js" defer></script>
+</body>
+</html>

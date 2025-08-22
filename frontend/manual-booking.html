@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manual Booking</title>
+  <link rel="stylesheet" href="css/intern.css" />
+  <style>
+    .seat {
+      width: 60px;
+      height: 60px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 0.5rem;
+      margin: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .seat.selected { background-color: #22c55e; color: white; }
+    .seat.booked { background-color: #facc15; color: black; cursor: not-allowed; }
+    .seat.registered-by-you { background-color: #f97316; color: white; }
+    .seat.available { background-color: #e5e7eb; color: #374151; }
+    .seat-row { 
+      display: flex; 
+      justify-content: center; 
+      margin-bottom: 0.5rem; 
+    }
+    .seat-map-container {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background-color: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+  <div class="intern-container">
+    <aside class="sidebar">
+      <h2>Intern Panel</h2>
+      <nav>
+        <a href="intern-dashboard.html" class="nav-link">Book Seat</a>
+        <a href="manual-booking.html" class="nav-link active">Manual Booking</a>
+        <a href="my-reservations.html" class="nav-link">My Reservations</a>
+        <a href="past-reservations.html" class="nav-link">Past Reservations</a>
+        <a href="my-reports.html" class="nav-link">My Reports</a>
+        <a href="index.html" class="nav-link" onclick="localStorage.clear()">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Manual Seat Booking</h1>
+      </header>
+
+      <div class="form-card">
+        <div class="form-field">
+          <label for="floorSelect">Select Floor:</label>
+          <select id="floorSelect">
+            <option value="1st floor">1st Floor</option>
+            <option value="2nd floor" selected>2nd Floor</option>
+            <option value="3rd floor">3rd Floor</option>
+            <option value="4th floor">4th Floor</option>
+            <option value="5th floor">5th Floor</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="manualDate">Select Date:</label>
+          <input type="date" id="manualDate" />
+        </div>
+
+        <button class="btn" onclick="loadManualSeats()">Load Seats</button>
+
+        <div class="seat-map-container" id="seatMap"></div>
+
+        <div class="legend">
+  <span><span class="seat sample available"></span> Available</span>
+  <span><span class="seat sample booked"></span> Booked by others</span>
+  <span><span class="seat sample registered-by-you"></span> Your Booking</span>
+  <span><span class="seat sample selected"></span> Selected</span>
+</div>
+
+
+        <div style="margin-top: 2rem; text-align: center;">
+          <button class="btn" onclick="openPopup()">Reserve Selected Seat(s)</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Seat Reservation Popup -->
+  <div id="popupForm" class="popup">
+    <h3>Reserve Seats</h3>
+    <form id="popupBookingForm">
+      <label for="popupDate">Date:</label>
+      <input type="date" id="popupDate" required />
+
+      <label for="popupStart">Start Time:</label>
+      <input type="time" id="popupStart" required />
+
+      <label for="popupEnd">End Time:</label>
+      <input type="time" id="popupEnd" required />
+
+      <button type="submit" class="btn">Confirm</button>
+      <button type="button" class="btn cancel-btn" onclick="closePopup()">Cancel</button>
+    </form>
+  </div>
+
+  <script>
+    const API = "http://localhost:5000/api";
+    const user = JSON.parse(localStorage.getItem("user"));
+    const selectedSeatIds = new Set();
+    const today = new Date().toISOString().split('T')[0];
+
+    // ✅ Check authentication when page loads (but allow time for user data to be set)
+    function checkAuthentication() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.id) {
+        setTimeout(() => {
+          const userCheck = JSON.parse(localStorage.getItem('user'));
+          if (!userCheck || !userCheck.id) {
+            alert("Please log in first.");
+            window.location.href = "index.html";
+          }
+        }, 1000); // Wait 1 second for user data to be set
+      }
+    }
+
+    // Call authentication check
+    checkAuthentication();
+
+    document.getElementById('manualDate').value = today;
+    document.getElementById('popupDate').value = today;
+
+    function loadManualSeats() {
+      const floor = document.getElementById("floorSelect").value;
+      const date = document.getElementById("manualDate").value;
+      const seatMap = document.getElementById("seatMap");
+      seatMap.innerHTML = "";
+
+      if (!floor || !date) {
+        alert("Please select floor and date.");
+        return;
+      }
+
+      fetch(`${API}/intern/manual-seats?floor=${encodeURIComponent(floor)}&userId=${user.id}&date=${date}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (!data || !Array.isArray(data)) {
+            seatMap.innerHTML = "<p>No seats available for this floor.</p>";
+            return;
+          }
+
+          // Create a flexible grid layout
+          const seatsPerRow = 5;
+          const totalRows = Math.ceil(data.length / seatsPerRow);
+          
+          for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+            const rowEl = document.createElement("div");
+            rowEl.className = "seat-row";
+            
+            const startIndex = rowIndex * seatsPerRow;
+            const endIndex = Math.min(startIndex + seatsPerRow, data.length);
+            
+            for (let i = startIndex; i < endIndex; i++) {
+              const seat = data[i];
+              const div = document.createElement("div");
+              div.className = "seat";
+              div.textContent = seat.seat_number;
+              div.dataset.id = seat.id;
+
+              if (seat.bookedByMe) {
+                div.classList.add("registered-by-you");
+              } else if (seat.booked) {
+                div.classList.add("booked");
+              } else {
+                div.classList.add("available");
+                div.onclick = () => toggleSeat(div);
+              }
+
+              rowEl.appendChild(div);
+            }
+            seatMap.appendChild(rowEl);
+          }
+        })
+        .catch(err => {
+          console.error("Failed to load seats:", err);
+          seatMap.innerHTML = `<p>Error loading seats: ${err.message}</p>`;
+        });
+    }
+
+    function toggleSeat(el) {
+      const id = el.dataset.id;
+      if (el.classList.contains("selected")) {
+        el.classList.remove("selected");
+        selectedSeatIds.delete(id);
+      } else {
+        el.classList.add("selected");
+        selectedSeatIds.add(id);
+      }
+    }
+
+    function openPopup() {
+      if (selectedSeatIds.size === 0) {
+        alert("Please select at least one seat.");
+        return;
+      }
+      document.getElementById("popupForm").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("popupForm").style.display = "none";
+    }
+
+    document.getElementById("popupBookingForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const seatIds = Array.from(selectedSeatIds);
+      const date = document.getElementById("popupDate").value;
+      const startTime = document.getElementById("popupStart").value;
+      const endTime = document.getElementById("popupEnd").value;
+
+      if (!date || !startTime || !endTime) {
+        alert("Please fill all details.");
+        return;
+      }
+
+      try {
+        for (let seatId of seatIds) {
+          const response = await fetch(`${API}/intern/reserve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ internId: user.id, seatId, date, startTime, endTime })
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to reserve seat');
+          }
+
+          const el = document.querySelector(`.seat[data-id='${seatId}']`);
+          if (el) {
+            el.classList.remove("selected", "available");
+            el.classList.add("registered-by-you");
+            el.onclick = null;
+          }
+        }
+
+        alert("Reservation successful!");
+        selectedSeatIds.clear();
+        closePopup();
+        
+        // Check if loadMyReservations function exists before calling it
+        if (typeof loadMyReservations === 'function') {
+          loadMyReservations();
+        }
+      } catch (error) {
+        console.error("Reservation error:", error);
+        alert(`Failed to reserve seat: ${error.message}`);
+      }
+    });
+
+    // Auto-load seats when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      loadManualSeats();
+    });
+    
+    // Also load when floor or date changes
+    document.getElementById('floorSelect').addEventListener('change', loadManualSeats);
+    document.getElementById('manualDate').addEventListener('change', loadManualSeats);
+  </script>
+</body>
+</html>

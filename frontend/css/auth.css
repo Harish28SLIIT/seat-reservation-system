@@ -1,0 +1,602 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* STRUCTURE */
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* BACKGROUND VIDEO */
+#bgVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* HEADER */
+header {
+  background: rgba(0, 123, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: white;
+  padding: 15px 30px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* ANIMATION */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* GLASS CONTAINER */
+.container {
+  flex: 1 0 auto;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 40px 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 420px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: fadeInUp 0.8s ease-out;
+  text-align: center;
+}
+
+.container > *:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+/* TITLE */
+.container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+/* INPUTS */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #0056b3, #004299);
+  transform: translateY(-2px);
+}
+
+/* TEXTS + LINKS */
+.container p {
+  font-size: 14px;
+  color: #f1f1f1;
+}
+
+.container a {
+  color: #00bfff;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.container a:hover {
+  color: #fff;
+}
+
+/* QUOTE */
+.login-quote {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 30px;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* LANDING PAGE OVERLAY */
+.overlay {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.app-name {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.quote {
+  font-size: 22px;
+  max-width: 600px;
+  margin-bottom: 40px;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+  font-style: italic;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.get-started {
+  text-decoration: none;
+  background: #ffc107;
+  color: black;
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.get-started:hover {
+  background: #e0a800;
+  transform: scale(1.05);
+}
+
+/* FOOTER */
+footer {
+  flex-shrink: 0;
+  background: #f2f2f2;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #555;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+  z-index: 2;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .app-name {
+    font-size: 32px;
+  }
+
+  .quote {
+    font-size: 16px;
+  }
+
+  .get-started {
+    font-size: 14px;
+    padding: 12px 24px;
+  }
+
+  .container {
+    padding: 25px 20px;
+    margin: 20px;
+  }
+}
+.google-btn {
+  background: white;
+  color: #444;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.google-btn:hover {
+  background: #f1f1f1;
+}
+.note {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* QR LOGIN MODAL STYLES */
+.qr-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.qr-modal-content {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.9));
+  margin: 5% auto;
+  padding: 0;
+  border: none;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.qr-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 20px;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qr-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.qr-close {
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qr-close:hover,
+.qr-close:focus {
+  color: #ff6b6b;
+  transform: scale(1.1);
+}
+
+.qr-step {
+  padding: 30px;
+  text-align: center;
+}
+
+.qr-step p {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+#qrCodeContainer {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+#qrCodeImage {
+  border: 3px solid #007bff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+  background: white;
+  padding: 10px;
+}
+
+.qr-instructions {
+  background: rgba(0, 123, 255, 0.1);
+  border-left: 4px solid #007bff;
+  padding: 15px;
+  border-radius: 5px;
+  text-align: left;
+  font-size: 14px;
+  margin-top: 20px;
+  color: #0056b3;
+}
+
+.verification-input {
+  width: 100%;
+  max-width: 250px;
+  padding: 12px;
+  font-size: 18px;
+  text-align: center;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  margin: 15px auto;
+  display: block;
+  letter-spacing: 2px;
+  font-weight: bold;
+  transition: border-color 0.3s ease;
+}
+
+.verification-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.verify-btn {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.verify-btn:hover {
+  background: linear-gradient(135deg, #218838, #1ba085);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.qr-status {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+.qr-status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.qr-status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.qr-status.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* QR Button Styling */
+.qr-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.qr-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004494);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* QR Modal Additional Styles */
+#otpSection {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #007bff;
+}
+
+#qrStatus {
+  margin-top: 15px;
+  text-align: center;
+}
+
+#qrStep2 {
+  display: none;
+}
+
+/* QR Status Styles */
+.qr-status {
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.qr-status.info {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #0056b3;
+  border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.qr-status.success {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #155724;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.qr-status.error {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #721c24;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+/* SMS OTP Modal Styles */
+.sms-otp-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.sms-otp-modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 30px;
+  border: none;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+  text-align: center;
+}
+
+/* Face Login Modal Styles */
+.face-login-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.face-login-modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 30px;
+  border: none;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+  text-align: center;
+}
+
+/* Other Login Options Section */
+.other-login-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-option {
+  margin-bottom: 15px;
+}
+
+/* Face Login Button */
+.face-login-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+  width: 100%;
+  display: block;
+}
+
+.face-login-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004494);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* SMS OTP Button */
+.sms-otp-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 10px 0;
+  width: 100%;
+  display: block;
+}
+
+.sms-otp-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004494);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+

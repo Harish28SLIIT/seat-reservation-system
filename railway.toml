@@ -1,0 +1,20 @@
+version: 2
+
+services:
+  web:
+    build:
+      dockerfile: Dockerfile
+    variables:
+      NODE_ENV: production
+    healthcheck:
+      path: /
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+plugins:
+  mysql:
+    image: mysql:8.0
+    variables:
+      MYSQL_ROOT_PASSWORD: ${{MYSQL_ROOT_PASSWORD}}
+      MYSQL_DATABASE: seat_reservation

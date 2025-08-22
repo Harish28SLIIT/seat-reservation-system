@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin QR Login - Seat Reservation System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .mobile-container {
+      background: rgba(255, 255, 255, 0.95);
+      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .header .emoji {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .admin-id-group {
+      background: rgba(139, 92, 246, 0.1);
+      border: 2px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .admin-id-group label {
+      color: #7c3aed;
+      font-weight: 700;
+    }
+
+    .admin-id-group .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .submit-btn:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status-message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+
+    .status-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      border: 2px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .status-message.loading {
+      background: rgba(59, 130, 246, 0.1);
+      color: #2563eb;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .security-notice {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid rgba(245, 158, 11, 0.3);
+      color: #d97706;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .steps {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid #3b82f6;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .steps h4 {
+      color: #1e40af;
+      margin-bottom: 10px;
+    }
+
+    .steps ol {
+      margin-left: 20px;
+      color: #374151;
+    }
+
+    @media (max-width: 480px) {
+      .mobile-container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      .header h1 {
+        font-size: 20px;
+      }
+      
+      .header .emoji {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <span class="emoji">🔐</span>
+      <h1>Admin QR Login</h1>
+    </div>
+
+    <p class="subtitle">Enter your admin credentials to complete the login process</p>
+
+    <div class="steps">
+      <h4>📱 What happens next:</h4>
+      <ol>
+        <li>Enter your Admin ID (1-5) and email address</li>
+        <li>Check your email for a 6-digit verification code</li>
+        <li>Enter the code on your computer</li>
+        <li>Access your admin dashboard</li>
+      </ol>
+    </div>
+
+    <form id="qrLoginForm">
+      <div class="admin-id-group">
+        <label for="adminId">🆔 Admin ID *</label>
+        <input type="number" id="adminId" name="adminId" required placeholder="Enter your admin ID (1-5)">
+        <div class="hint">Enter your admin ID from the system (1, 2, 3, 4, or 5)</div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">📧 Email Address *</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email address">
+        <div class="hint">Verification code will be sent to this email</div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        🚀 Send Verification Code
+      </button>
+    </form>
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <div class="security-notice">
+      🔒 <strong>Security Notice:</strong> This form is only for authorized administrators. All login attempts are logged and monitored.
+    </div>
+  </div>
+
+  <script>
+    // Get session ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session');
+
+    if (!sessionId) {
+      showStatus('Invalid QR code session. Please try again.', 'error');
+      document.getElementById('submitBtn').disabled = true;
+    }
+
+    document.getElementById('qrLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const adminId = document.getElementById('adminId').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!adminId || !email) {
+        showStatus('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        showStatus('Please enter a valid email address.', 'error');
+        return;
+      }
+
+      // Validate admin ID is between 1-5
+      const adminIdNum = parseInt(adminId);
+      if (isNaN(adminIdNum) || adminIdNum < 1 || adminIdNum > 5) {
+        showStatus('Admin ID must be between 1 and 5.', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.textContent;
+      
+      try {
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Sending...';
+        showStatus('Verifying your admin credentials...', 'loading');
+
+        const response = await fetch('/api/qr-login/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sessionId: sessionId,
+            adminId: adminIdNum,
+            email: email
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showStatus(`✅ ${data.message}`, 'success');
+          
+          // Update form to show completion
+          document.getElementById('qrLoginForm').style.display = 'none';
+          
+          const successHTML = `
+            <div style="text-align: center; padding: 20px;">
+              <div style="font-size: 64px; margin-bottom: 20px;">📧</div>
+              <h3 style="color: #059669; margin-bottom: 15px;">Verification Code Sent!</h3>
+              <p style="color: #666; line-height: 1.6;">
+                We've sent a 6-digit verification code to <strong>${email}</strong>.<br><br>
+                Please check your inbox and enter the code on your computer to complete the login.
+              </p>
+              <div style="margin-top: 30px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 2px solid rgba(16, 185, 129, 0.3);">
+                <h4 style="color: #059669; margin-bottom: 10px;">✨ Final Step:</h4>
+                <p style="color: #047857; font-weight: 600;">
+                  Return to your computer and enter the verification code to access your admin dashboard.
+                </p>
+              </div>
+            </div>
+          `;
+          
+          document.querySelector('.mobile-container').innerHTML = `
+            <div class="header">
+              <span class="emoji">✅</span>
+              <h1>Almost Done!</h1>
+            </div>
+            ${successHTML}
+          `;
+          
+        } else {
+          showStatus(`❌ ${data.error}`, 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+
+      } catch (error) {
+        console.error('Submit error:', error);
+        showStatus('❌ Network error. Please check your connection and try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    function showStatus(message, type) {
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.textContent = message;
+      statusEl.className = `status-message ${type}`;
+      statusEl.style.display = 'block';
+      
+      // Auto-hide success messages after 10 seconds
+      if (type === 'success') {
+        setTimeout(() => {
+          statusEl.style.display = 'none';
+        }, 10000);
+      }
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // Auto-focus first input
+    document.getElementById('adminId').focus();
+
+    // Add real-time validation
+    document.getElementById('adminId').addEventListener('input', function() {
+      const value = this.value;
+      const adminIdNum = parseInt(value);
+      if (value && (isNaN(adminIdNum) || adminIdNum < 1 || adminIdNum > 5)) {
+        this.style.borderColor = '#ef4444';
+        showStatus('Admin ID must be between 1 and 5.', 'error');
+      } else {
+        this.style.borderColor = '#e5e7eb';
+        document.getElementById('statusMessage').style.display = 'none';
+      }
+    });
+
+    document.getElementById('email').addEventListener('input', function() {
+      const value = this.value;
+      if (value && !validateEmail(value)) {
+        this.style.borderColor = '#ef4444';
+      } else {
+        this.style.borderColor = '#e5e7eb';
+      }
+    });
+  </script>
+</body>
+</html>
